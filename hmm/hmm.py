@@ -1,4 +1,10 @@
 import numpy as np
+
+"""
+again used chatgpt to help me understand the code and also to set it up
+i did also consult the literature provided on github 
+"""
+
 class HiddenMarkovModel:
     """
     Class for Hidden Markov Model 
@@ -42,6 +48,7 @@ class HiddenMarkovModel:
         """        
 
         num_obs = len(input_observation_states)
+        #determines how many possible hidden states exist 
         num_states = len(self.hidden_states)
 
         #step1: initialize the forward prob matrix
@@ -90,20 +97,45 @@ class HiddenMarkovModel:
         Returns:
             best_hidden_state_sequence(list): most likely list of hidden states that generated the sequence observed states
         """        
-        
-        # Step 1. Initialize variables
-        
+        num_obs = len(decode_observation_states)
+        num_states = len(self.hidden_states)
+
         #store probabilities of hidden state at each step 
         viterbi_table = np.zeros((len(decode_observation_states), len(self.hidden_states)))
-        #store best path for traceback
-        best_path = np.zeros(len(decode_observation_states))         
+        backpointer = np.zeros((num_obs, num_states), dtype=int)  #stores best previous state
+
+        #initialize base case (time step 1)
+        first_obs_index = self.observation_states_dict[decode_observation_states[0]]
+        for state in range(num_states):
+            viterbi_table[0, state] = self.prior_p[state] * self.emission_p[state, first_obs_index]
+            backpointer[0, state] = 0 #no previous state at t=0
         
-       
-       # Step 2. Calculate Probabilities
-
+        #step 2: compute viterbi probs iteratively, starts at t=2, converts the current obs into a numerical index
+        for t in range(1, num_obs):
+            #iterates through each time step
+            obs_index = self.observation_states_dict[decode_observation_states[t]]
+            for j in range(num_states):
+                #selects the column for the current state
+                probs = viterbi_table[t-1, :] * self.transition_p[:, j]
+                #np.argmax finds the index of the highest prob transition
+                best_prev_state = np.argmax(probs)
+                viterbi_table[t, j] = probs[best_prev_state] * self.emission_p[j, obs_index]
+                backpointer[t, j] = best_prev_state
             
-        # Step 3. Traceback 
+        # Step 3. Traceback to find the best sequence
+        best_last_state = np.argmax(viterbi_table[-1, :])
+        best_hidden_state_sequence = [best_last_state]
 
+        for t in range(num_obs-1, 0, -1):
+            best_last_state = backpointer[t, best_last_state]
+            best_hidden_state_sequence.append(best_last_state)
+        
+        #reversing the sequence to match the observation order
+        best_hidden_state_sequence.reverse()
 
-        # Step 4. Return best hidden state sequence 
+        #convert indices to state names
+        best_hidden_state_sequence = [self.hidden_states_dict[state] for state in best_hidden_state_sequence]
+
+        return best_hidden_state_sequence
+
         
