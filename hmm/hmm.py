@@ -40,14 +40,41 @@ class HiddenMarkovModel:
         Returns:
             forward_probability (float): forward probability (likelihood) for the input observed sequence  
         """        
-        
-        # Step 1. Initialize variables
-        
+
+        num_obs = len(input_observation_states)
+        num_states = len(self.hidden_states)
+
+        #step1: initialize the forward prob matrix
+        alpha = np.zeros((num_obs, num_states))
+
+        #initialize base case (step1)
+        first_obs_index = self.observation_states_dict[input_observation_states[0]]
+        #prob of starting in each hidden state and emitting the first observation, which is the prob of starting in hidden state multiplied by the 
+        #prob of emitting the first observation given that hidden state. 
+        #for each state si, we compute the prob of starting in state si and observing o1
+        #self.emission_p is the emission prob of observing o1 in state si
+        for state in range(num_states):
+            alpha[0, state] = self.prior_p[state] * self.emission_p[state, first_obs_index]
        
         # Step 2. Calculate probabilities
+        #for each time step t=2 to T, and for each state sj, we compute the prob of observing the first t obs and ending in state sj
+        #we start with a loop that runs until the last obs, each iteration calculates the prob of raching each hidden state at time t, considering
+        #all possible transitions from the previous step t-1
+        for t in range(1, num_obs):
+            #this index is used to look up the emission prob
+            obs_index = self.observation_states_dict[input_observation_states]
+            for j in range(num_states):
+            #loops through each hidden state at time t
+            #takes the previous prob of all states, multiplies by the transition prob, sums over all prev. states to give total prob of arriving at state j at time t
+            #after transitioning to thate Sj multiply prob of emitting observation t in this state which is self.emission_p
+            #alpha[t-1, :] prob of being in certain state previousy, times self.transition_p[:, j] transitioning to desired state * prob of observation given desired state
+                alpha[t, j] = np.sum(alpha[t-1, :] * self.transition_p[:, j]) * self.emission_p[j, obs_index]
+
 
 
         # Step 3. Return final probability 
+        forward_probability = np.sum(alpha[-1, :])
+        return forward_probability
         
 
 
