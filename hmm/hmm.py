@@ -69,7 +69,7 @@ class HiddenMarkovModel:
         #all possible transitions from the previous step t-1
         for t in range(1, num_obs):
             #this index is used to look up the emission prob
-            obs_index = self.observation_states_dict[input_observation_states]
+            obs_index = self.observation_states_dict[input_observation_states[t]]
             for j in range(num_states):
             #loops through each hidden state at time t
             #takes the previous prob of all states, multiplies by the transition prob, sums over all prev. states to give total prob of arriving at state j at time t
