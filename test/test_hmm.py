@@ -46,8 +46,18 @@ def test_mini_weather():
     
     #there is only a 'best_hidden_state_sequence in the mini_input file, not for forward hmm
     assert viterbi_path == best_hidden_sequence    
-   
-    pass
+
+    #edge cases
+    empty_obs = np.array([])
+    assert hmm.forward(empty_obs) == 0 #forward should return 0 on empty sequence
+    assert hmm.viterbi(empty_obs) == [] #"viterbi should return empty list for empty state
+
+    single_obs = np.array([observation_states[0]])
+    assert isinstance(hmm.forward[single_obs], float) #forward should return a probability, the total likelihood
+    assert len(hmm.viterbi(single_obs)) == 1 #viterbi should return a single state, the most probable single state
+
+
+
 
 
 
