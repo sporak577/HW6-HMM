@@ -33,6 +33,12 @@ def test_mini_weather():
     #extract observation sequences and expected outputs
     observations = mini_input['observation_state_sequence']
     best_hidden_sequence = mini_input['best_hidden_state_sequence']
+
+    # Check if observations are empty before running tests
+    assert observations.size > 0
+
+    print("Observations shape:", observations.shape)
+    print("Observations content:", observations)
     
     #initialize the HMM model
     hmm = HiddenMarkovModel(observation_states, hidden_states, prior_p, transition_p, emission_p)
@@ -49,11 +55,13 @@ def test_mini_weather():
 
     #edge cases
     empty_obs = np.array([])
-    assert hmm.forward(empty_obs) == 0 #forward should return 0 on empty sequence
+    empty_obs = np.array([])
+    assert empty_obs.size == 0, "Empty observation test case is not actually empty."
+    assert hmm.forward(empty_obs) == 0.0 #forward should return 0 on empty sequence
     assert hmm.viterbi(empty_obs) == [] #"viterbi should return empty list for empty state
 
     single_obs = np.array([observation_states[0]])
-    assert isinstance(hmm.forward[single_obs], float) #forward should return a probability, the total likelihood
+    assert isinstance(hmm.forward(single_obs), float) #forward should return a probability, the total likelihood
     assert len(hmm.viterbi(single_obs)) == 1 #viterbi should return a single state, the most probable single state
 
 
