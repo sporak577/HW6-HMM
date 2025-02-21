@@ -43,7 +43,7 @@ def test_mini_weather():
     
     #there is only a 'best_hidden_state_sequence in the mini_input file, not for forward hmm
     assert viterbi_path == best_hidden_sequence
-    
+
 
     
    
@@ -64,6 +64,40 @@ def test_full_weather():
     """
 
     pass
+
+    full_hmm=np.load('./data/full_weather_hmm.npz')
+    full_input=np.load('./data/full_weather_sequences.npz')
+
+    #extract parameters from the .npz file 
+    hidden_states = full_hmm['hidden_states']
+    observation_states = full_hmm['observation_states']
+    prior_p = full_hmm['prior_p']
+    transition_p = full_hmm['transition_p']
+    emission_p = full_hmm['emission_p']
+
+    #extract observation sequences and expected outputs
+    observations = full_input['observation_state_sequence']
+    best_hidden_sequence = full_input['best_hidden_state_sequence']
+    
+    #initialize the HMM model
+    hmm = HiddenMarkovModel(observation_states, hidden_states, prior_p, transition_p, emission_p)
+
+    forward_prob = hmm.forward(observations)
+
+    viterbi_path = hmm.viterbi(observations)
+
+    #converting numpy array to a list for proper comparison
+    best_hidden_sequence = best_hidden_sequence.tolist()
+    
+    #there is only a 'best_hidden_state_sequence in the mini_input file, not for forward hmm
+    assert viterbi_path == best_hidden_sequence
+    
+
+    
+   
+    pass
+
+
 
 
 
