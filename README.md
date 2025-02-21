@@ -83,3 +83,12 @@ Push your code to GitHub with passing unit tests, and submit a link to your repo
 
 * Extra credit (0.5 points)
     * Pip installable and Github actions (0.5)
+
+
+Brief description of methods: 
+
+The Forward Algorithm calculates the total probability of an observation sequence under a given HMM by summing over all possible hidden state sequences.
+
+The Viterbi Algorithm finds the most probable sequence / hidden state given an observation sequence. 
+
+Both algorithms are using dynamic programming to efficiently process sequences of observations in the hidden states. 
