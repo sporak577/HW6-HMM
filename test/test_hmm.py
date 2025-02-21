@@ -2,6 +2,9 @@ import pytest
 from hmm import HiddenMarkovModel
 import numpy as np
 
+"""
+using chatgpt and the help of Isaiah Hazelwood (biophysics phd student)
+"""
 
 def test_mini_weather():
     """
@@ -42,10 +45,7 @@ def test_mini_weather():
     best_hidden_sequence = best_hidden_sequence.tolist()
     
     #there is only a 'best_hidden_state_sequence in the mini_input file, not for forward hmm
-    assert viterbi_path == best_hidden_sequence
-
-
-    
+    assert viterbi_path == best_hidden_sequence    
    
     pass
 
