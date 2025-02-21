@@ -46,6 +46,8 @@ class HiddenMarkovModel:
         Returns:
             forward_probability (float): forward probability (likelihood) for the input observed sequence  
         """        
+        if input_observation_states.size == 0:
+            return 0.0  # Prevents index error by returning 0 for empty input
 
         num_obs = len(input_observation_states)
         #determines how many possible hidden states exist 
@@ -97,6 +99,8 @@ class HiddenMarkovModel:
         Returns:
             best_hidden_state_sequence(list): most likely list of hidden states that generated the sequence observed states
         """        
+        if decode_observation_states.size == 0:
+            return []  # Return an empty list if the input sequence is empty
         num_obs = len(decode_observation_states)
         num_states = len(self.hidden_states)
 
